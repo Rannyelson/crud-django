@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}{{ product.name }} — TechShop{% endblock %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Início</a></li>
+            <li class="breadcrumb-item">
+                {% if user.is_authenticated and user.is_admin %}
+                <a href="{% url 'categories' %}">{{ product.category.name }}</a>
+                {% else %}
+                {{ product.category.name }}
+                {% endif %}
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 1.25rem;">
+        <div class="row g-0">
+            <div class="col-md-6 bg-white">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="w-100 h-100" style="object-fit: cover; max-height: 480px;" alt="{{ product.name }}">
+                {% else %}
+                <div class="no-image d-flex align-items-center justify-content-center" style="height: 100%; min-height: 320px;">
+                    <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <div class="card-body p-4 p-lg-5 d-flex flex-column h-100">
+                    <span class="badge category-badge align-self-start">{{ product.category.name }}</span>
+                    <h1 class="h2 fw-bold mt-3">{{ product.name }}</h1>
+                    <p class="product-price" style="font-size: 2rem;">R$ {{ product.price|intcomma }}</p>
+                    <p class="text-muted">{{ product.description }}</p>
+                    <ul class="list-unstyled small text-muted d-grid gap-2 mb-4">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Produto 100% original</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Garantia de 12 meses</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Troca grátis em até 7 dias</li>
+                    </ul>
+                    <div class="mt-auto d-flex gap-2 pt-3">
+                        <form method="post" action="{% url 'add_to_cart' product.id %}" class="flex-fill d-grid">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-brand btn-lg">
+                                <i class="bi bi-cart-plus me-2"></i>Adicionar ao carrinho
+                            </button>
+                        </form>
+                    </div>
+                    <p class="small text-muted mt-3 mb-0">
+                        <i class="bi bi-truck me-1"></i>Frete grátis acima de R$ 199
+                        <span class="mx-2">·</span>
+                        <i class="bi bi-shield-check me-1"></i>Compra 100% segura
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if related %}
+    <h2 class="section-title h4 mt-5 mb-3">
+        <i class="bi bi-tags text-brand"></i>Produtos relacionados
+    </h2>
+    <div class="row">
+        {% for prd in related %}
+        {% include 'partials/product_card.html' with action='detail' %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

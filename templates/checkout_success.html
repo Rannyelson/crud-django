@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Compra Finalizada — TechShop{% endblock %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container mt-4" style="max-width: 620px;">
+    <div class="card border-0 shadow-sm text-center p-5" style="border-radius: 1.25rem;">
+        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+        <h1 class="h4 fw-bold mt-3">Compra finalizada com sucesso!</h1>
+        <p class="text-muted mt-2 mb-0">
+            Pedido <strong>#{{ order.id }}</strong> registrado.
+        </p>
+        {% if customer_name %}
+        <p class="text-muted mt-2 mb-0">
+            Obrigado pela preferência, <strong>{{ customer_name }}</strong>.
+        </p>
+        {% endif %}
+        <p class="text-muted mt-2">
+            Este pedido é uma demonstração acadêmica — nenhum pagamento foi processado.
+        </p>
+        <div class="d-grid gap-2 mt-4">
+            <a href="{% url 'home' %}" class="btn btn-brand">
+                <i class="bi bi-bag me-1"></i>Voltar às compras
+            </a>
+            <a href="{% url 'cart' %}" class="btn btn-outline-secondary">Ver meu carrinho</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

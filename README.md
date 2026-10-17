@@ -7,7 +7,7 @@ Aplicação web acadêmica para gerenciamento de produtos, desenvolvida com Pyth
 - atualização de informações;
 - exclusão com confirmação.
 
-Cada produto possui nome, preço, descrição e imagem. A interface utiliza Bootstrap 5, Django Crispy Forms e cards responsivos.
+Cada produto possui nome, preço, descrição, imagem e categoria. As categorias são cadastradas em um modelo próprio e relacionadas aos produtos por meio de uma chave estrangeira (ForeignKey). A interface utiliza Bootstrap 5, Django Crispy Forms e cards responsivos, com mensagens de feedback após cada operação.
 
 ## Tecnologias
 
@@ -44,7 +44,7 @@ Se a ativação do ambiente virtual for bloqueada, os comandos podem ser executa
 
 ## Produtos de demonstração
 
-O projeto inclui seis produtos fictícios e imagens de catálogo criadas especialmente para os cards. Para inserir ou atualizar os dados:
+O projeto inclui seis produtos fictícios em três categorias (Eletrônicos, Acessórios e Casa). As imagens de demonstração são geradas automaticamente com Pillow. Para inserir ou atualizar os dados:
 
 ```powershell
 python manage.py seed_products

@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Dashboard — TechShop{% endblock %}
+
+{% block style %}
+<style>
+    .stat-card {
+        border: 0;
+        border-radius: 1.1rem;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, .07);
+        height: 100%;
+    }
+    .stat-card .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+    }
+    .stat-value {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1.6rem;
+        color: var(--ink);
+    }
+    .rank-bar {
+        height: 8px;
+        border-radius: 999px;
+        background: var(--brand-light);
+        overflow: hidden;
+    }
+    .rank-bar .fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container mt-4">
+    <div class="page-header d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <h1 class="h3 mb-1"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h1>
+            <p class="mb-0 opacity-75">Visão geral das vendas da loja.</p>
+        </div>
+        <span class="badge bg-light text-dark px-3 py-2">
+            <i class="bi bi-calendar3 me-1"></i>{{ today|date:"d/m/Y" }}
+        </span>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-sm-6 col-lg-4">
+            <div class="card stat-card p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">Vendas do dia</p>
+                        <p class="stat-value mb-0">R$ {{ sales_day_total|intcomma }}</p>
+                        <p class="text-muted small mb-0">{{ sales_day_count }} pedido(s)</p>
+                    </div>
+                    <span class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-cash-coin"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card stat-card p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">Vendas do mês</p>
+                        <p class="stat-value mb-0">R$ {{ sales_month_total|intcomma }}</p>
+                        <p class="text-muted small mb-0">{{ sales_month_count }} pedido(s)</p>
+                    </div>
+                    <span class="stat-icon bg-success bg-opacity-10 text-success"><i class="bi bi-graph-up-arrow"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card stat-card p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">Ticket médio do mês</p>
+                        <p class="stat-value mb-0">R$ {{ avg_ticket|intcomma }}</p>
+                        <p class="text-muted small mb-0">por pedido</p>
+                    </div>
+                    <span class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-receipt"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card stat-card p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">Clientes cadastrados</p>
+                        <p class="stat-value mb-0">{{ clients_count }}</p>
+                        <p class="text-muted small mb-0">contas ativas</p>
+                    </div>
+                    <span class="stat-icon bg-info bg-opacity-10 text-info"><i class="bi bi-people"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card stat-card p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">Produtos no catálogo</p>
+                        <p class="stat-value mb-0">{{ products_count }}</p>
+                        <p class="text-muted small mb-0">disponíveis na loja</p>
+                    </div>
+                    <span class="stat-icon bg-danger bg-opacity-10 text-danger"><i class="bi bi-box-seam"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+            <div class="card stat-card p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">Pedidos no mês</p>
+                        <p class="stat-value mb-0">{{ sales_month_count }}</p>
+                        <p class="text-muted small mb-0">compras finalizadas</p>
+                    </div>
+                    <span class="stat-icon bg-secondary bg-opacity-10 text-secondary"><i class="bi bi-bag-check"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-7">
+            <div class="card stat-card">
+                <div class="card-body p-4">
+                    <h2 class="h5 fw-bold mb-4"><i class="bi bi-trophy me-2 text-warning"></i>Produtos mais vendidos</h2>
+                    {% if top_products %}
+                    {% for product in top_products %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-semibold">{{ forloop.counter }}. {{ product.product__name }}</span>
+                            <span class="text-muted small">
+                                {{ product.qty }} un. · R$ {{ product.revenue|intcomma }}
+                            </span>
+                        </div>
+                        <div class="rank-bar">
+                            <div class="fill" style="width: {% if max_top_qty %}{% widthratio product.qty max_top_qty 100 %}{% else %}0{% endif %}%;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-muted mb-0">Ainda não há vendas registradas.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card stat-card">
+                <div class="card-body p-4">
+                    <h2 class="h5 fw-bold mb-4"><i class="bi bi-calendar-week me-2 text-primary"></i>Vendas dos últimos 7 dias</h2>
+                    {% for day in week %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small">{{ day.date|date:"d/m" }}</span>
+                        <div class="rank-bar flex-fill mx-3">
+                            <div class="fill" style="width: {% if max_day_count %}{% widthratio day.count max_day_count 100 %}{% else %}0{% endif %}%;"></div>
+                        </div>
+                        <span class="small fw-semibold">{{ day.count }} ped. · R$ {{ day.total|intcomma }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card stat-card mt-4">
+        <div class="card-body p-4">
+            <h2 class="h5 fw-bold mb-3"><i class="bi bi-clock-history me-2 text-success"></i>Últimos pedidos</h2>
+            {% if recent_orders %}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Pagamento</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td class="fw-semibold">{{ order.id }}</td>
+                            <td>{{ order.user.username }}</td>
+                            <td class="text-muted">{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                            <td>{{ order.payment_label }}</td>
+                            <td class="text-end fw-semibold">R$ {{ order.total|intcomma }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted mb-0">Nenhum pedido registrado até o momento.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
