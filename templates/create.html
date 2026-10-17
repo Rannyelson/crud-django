@@ -1,19 +1,33 @@
 {% extends 'base.html' %}
-{% block title %}Create Product{% endblock %}
+{% block title %}Cadastrar Produto — TechShop{% endblock %}
 
 {% block content %}
 {% include 'navbar.html' %}
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
-            <h1>Create Product</h1>
+<div class="container mt-4" style="max-width: 760px;">
+    <div class="card form-card">
+        <div class="card-header py-3">
+            <h1 class="h4 mb-0"><i class="bi bi-plus-circle me-2"></i>Cadastrar produto</h1>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
+            {% if not has_categories %}
+            <div class="alert alert-warning d-flex align-items-start gap-2" role="alert">
+                <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+                <div>
+                    Nenhuma categoria cadastrada. O produto precisa de uma categoria —
+                    <a href="{% url 'category_create' %}" class="alert-link">cadastre uma categoria</a> primeiro.
+                </div>
+            </div>
+            {% endif %}
             <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% load crispy_forms_tags %}
                 {{ form|crispy }}
-                <button type="submit" class="btn btn-primary mt-3">Add Product</button>
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-brand px-4">
+                        <i class="bi bi-check-lg me-1"></i>Cadastrar
+                    </button>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
+                </div>
             </form>
         </div>
     </div>

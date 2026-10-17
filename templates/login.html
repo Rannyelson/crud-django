@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Entrar — TechShop{% endblock %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container mt-4" style="max-width: 460px;">
+    <div class="card form-card">
+        <div class="card-header py-3 text-center">
+            <h1 class="h4 mb-0"><i class="bi bi-person-circle me-2"></i>Entrar na sua conta</h1>
+        </div>
+        <div class="card-body p-4">
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+                {% endif %}
+                {% load crispy_forms_tags %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-brand w-100 mt-3">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Entrar
+                </button>
+            </form>
+            <hr>
+            <p class="text-center small text-muted mb-0">
+                Ainda não tem conta? <a href="{% url 'register' %}">Criar conta</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

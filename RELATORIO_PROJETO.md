@@ -9,7 +9,7 @@ Este projeto é uma aplicação web para cadastro e gerenciamento de produtos. E
 - **Update (Atualizar):** alterar os dados de um produto;
 - **Delete (Excluir):** remover um produto.
 
-Cada produto possui nome, preço, descrição e imagem. A interface usa Bootstrap 5 para oferecer uma apresentação responsiva e componentes prontos, como cartões, barra de navegação e janelas modais.
+Cada produto possui nome, preço, descrição, imagem e uma categoria. A interface usa Bootstrap 5 para oferecer uma apresentação responsiva e componentes prontos, como cartões, barra de navegação e janelas modais. Toda operação realizada pelo usuário exibe uma mensagem de confirmação ou de erro.
 
 ## 2. Objetivo acadêmico
 
@@ -43,7 +43,7 @@ crud-django/
 │   ├── migrations/            # Histórico da estrutura do banco
 │   ├── admin.py               # Registro no painel administrativo
 │   ├── forms.py               # Formulário baseado no modelo
-│   ├── models.py              # Modelo Product
+│   ├── models.py              # Modelos Category e Product (com ForeignKey)
 │   ├── tests.py               # Testes automatizados do CRUD
 │   ├── urls.py                # Rotas da aplicação
 │   └── views.py               # Lógica das operações CRUD
@@ -59,7 +59,16 @@ crud-django/
 
 ## 5. Modelo de dados
 
-A entidade principal é `Product`, definida em `crud_app/models.py`.
+A aplicação possui dois modelos relacionados: `Category` e `Product`, definidos em `crud_app/models.py`.
+
+### Category
+
+| Campo | Tipo | Finalidade |
+|---|---|---|
+| `id` | BigAutoField | Identificador gerado automaticamente |
+| `name` | CharField | Nome da categoria, com até 100 caracteres |
+
+### Product
 
 | Campo | Tipo | Finalidade |
 |---|---|---|
@@ -68,6 +77,9 @@ A entidade principal é `Product`, definida em `crud_app/models.py`.
 | `price` | IntegerField | Preço armazenado como número inteiro |
 | `description` | TextField | Descrição livre do produto |
 | `image` | ImageField | Caminho da imagem salva em `media/products/` |
+| `category` | ForeignKey(Category) | Categoria à qual o produto pertence |
+
+O relacionamento `category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')` garante que cada produto pertence a uma categoria e que, ao excluir uma categoria, seus produtos também são removidos. O atributo `related_name` permite acessar os produtos de uma categoria com `category.products.all()`.
 
 O ORM do Django converte operações Python, como `Product.objects.all()` e `form.save()`, em comandos SQL. Assim, a aplicação não precisa montar SQL manualmente.
 
@@ -75,19 +87,19 @@ O ORM do Django converte operações Python, como `Product.objects.all()` e `for
 
 ### Listagem
 
-A rota `/` executa a função `index`. Ela consulta todos os produtos e envia a coleção ao template `index.html`, que monta um cartão Bootstrap para cada item.
+A rota `/` executa a função `index`. Ela consulta todos os produtos e envia a coleção ao template `index.html`, que monta um cartão Bootstrap para cada item, exibindo também a categoria do produto. Quando não há produtos cadastrados, a página mostra um aviso com um link para o cadastro.
 
 ### Cadastro
 
-A rota `/create` exibe um `ModelForm`. Em uma requisição POST, o Django valida texto, número e imagem. Se os dados forem válidos, `form.save()` grava o produto e o usuário volta à página inicial.
+A rota `/create` exibe um `ModelForm`. Em uma requisição POST, o Django valida texto, número, imagem e categoria. Se os dados forem válidos, `form.save()` grava o produto, o usuário volta à página inicial e vê a mensagem "Produto cadastrado com sucesso".
 
 ### Atualização
 
-A rota `/update` lista os produtos. Cada cartão abre uma janela modal preenchida com os dados atuais. Ao confirmar, a View localiza o registro pela chave primária, atualiza os campos e salva as mudanças.
+A rota `/update` lista os produtos. Cada cartão abre uma janela modal preenchida com os dados atuais, incluindo um seletor de categoria. Ao confirmar, a View localiza o registro pela chave primária, valida os dados com o mesmo `ModelForm` usado no cadastro e salva as mudanças. Caso algum campo seja inválido, o registro não é alterado e uma mensagem de erro é exibida.
 
 ### Exclusão
 
-A rota `/delete` lista os produtos e abre uma confirmação em modal. O formulário envia o identificador por POST e a View exclui o registro correspondente. O token CSRF protege a requisição contra envios originados de sites maliciosos.
+A rota `/delete` lista os produtos e abre uma confirmação em modal, informando que a ação não pode ser desfeita. O formulário envia o identificador por POST e a View exclui o registro correspondente, exibindo uma mensagem de sucesso. O token CSRF protege a requisição contra envios originados de sites maliciosos.
 
 ## 7. Rotas
 
@@ -144,7 +156,7 @@ python manage.py runserver
 
 ## 10. Testes e validação
 
-A suíte em `crud_app/tests.py` verifica listagem, cadastro, atualização e exclusão. Ela usa um banco temporário, separado do banco local.
+A suíte em `crud_app/tests.py` verifica listagem, cadastro, atualização, exclusão, relacionamento com categoria, tratamento de dados inválidos, registro inexistente e idempotência do seed. Ela usa um banco temporário, separado do banco local.
 
 ```powershell
 python manage.py check
@@ -158,7 +170,9 @@ Também foi executado `collectstatic`, que prepara os arquivos usados pelo paine
 ### Pontos positivos
 
 - separação clara entre Model, Template e View;
-- uso do ORM e de `ModelForm`;
+- dois modelos relacionados por chave estrangeira (ForeignKey);
+- uso do ORM e de `ModelForm`, inclusive na atualização;
+- mensagens de feedback ao usuário em todas as operações;
 - suporte a upload de imagens;
 - interface responsiva com Bootstrap;
 - painel administrativo nativo do Django;
@@ -168,8 +182,6 @@ Também foi executado `collectstatic`, que prepara os arquivos usados pelo paine
 
 - usar `DecimalField` em vez de `IntegerField` para preços com centavos;
 - adicionar autenticação e autorização para impedir alterações anônimas;
-- usar formulários Django também na atualização;
-- tratar registros inexistentes com `get_object_or_404`;
 - excluir o arquivo de imagem quando um produto for removido;
 - adicionar paginação, pesquisa e ordenação;
 - melhorar acessibilidade e traduzir todos os textos da interface;
@@ -181,12 +193,12 @@ Também foi executado `collectstatic`, que prepara os arquivos usados pelo paine
 1. **Problema:** apresentar a necessidade de cadastrar e administrar produtos.
 2. **Conceito central:** explicar que CRUD significa criar, ler, atualizar e excluir.
 3. **Arquitetura:** mostrar Model, View e Template e como eles se comunicam.
-4. **Banco:** apresentar a tabela de produtos e explicar o ORM.
-5. **Demonstração:** cadastrar, listar, editar e excluir um produto.
+4. **Banco:** apresentar as tabelas de produtos e categorias, explicar o ORM e a ForeignKey.
+5. **Demonstração:** cadastrar, listar, editar e excluir um produto, mostrando as mensagens de feedback.
 6. **Segurança:** destacar POST, token CSRF e variáveis de ambiente.
-7. **Qualidade:** executar ou mencionar os quatro testes automatizados.
+7. **Qualidade:** executar ou mencionar os oito testes automatizados.
 8. **Conclusão:** comentar as melhorias futuras, especialmente autenticação e preço decimal.
 
 ## 13. Conclusão
 
-O projeto cumpre o propósito de demonstrar um CRUD completo com Django. Apesar de simples, ele percorre o fluxo essencial de uma aplicação web: o navegador envia uma requisição, uma View executa a regra, o ORM acessa o banco e um Template devolve HTML. Com as configurações locais e os testes adicionados, o sistema pode ser executado e apresentado de forma reproduzível.
+O projeto cumpre o propósito de demonstrar um CRUD completo com Django, incluindo dois modelos relacionados por chave estrangeira. Apesar de simples, ele percorre o fluxo essencial de uma aplicação web: o navegador envia uma requisição, uma View executa a regra, o ORM acessa o banco e um Template devolve HTML. Com as configurações locais e os testes adicionados, o sistema pode ser executado e apresentado de forma reproduzível.

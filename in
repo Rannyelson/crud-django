@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TechShop — Loja de Tecnologia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="/static/vendor/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/vendor/icons/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #4f46e5;
+            --brand-dark: #4338ca;
+            --brand-light: #eef2ff;
+            --ink: #1e293b;
+            --muted: #64748b;
+            --bg: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, h5, .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        a { color: var(--brand); text-decoration: none; }
+        a:hover { color: var(--brand-dark); }
+
+        /* ---------- Topo / Navbar ---------- */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .top-bar {
+            background: #1e1b4b;
+            color: #c7d2fe;
+            font-size: .85rem;
+        }
+
+        .navbar-store {
+            background: #fff;
+            box-shadow: 0 2px 14px rgba(15, 23, 42, .08);
+        }
+
+        .navbar-toggler {
+            border: 1px solid #e2e8f0;
+            border-radius: .6rem;
+            padding: .3rem .55rem;
+            font-size: 1.1rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 .2rem rgba(79, 70, 229, .15);
+        }
+
+        .brand-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-link-store {
+            font-weight: 500;
+            color: var(--ink);
+            padding: .5rem .9rem;
+            border-radius: .5rem;
+        }
+
+        .nav-link-store:hover, .nav-link-store.active {
+            color: var(--brand);
+            background: var(--brand-light);
+        }
+
+        .dropdown-menu {
+            border: 0;
+            border-radius: .9rem;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, .15);
+            padding: .5rem;
+        }
+        .dropdown-item { border-radius: .5rem; padding: .55rem .9rem; font-size: .95rem; }
+
+        /* ---------- Menu mobile ---------- */
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background: #fff;
+                border-radius: .9rem;
+                padding: .75rem;
+                margin-top: .75rem;
+                box-shadow: 0 10px 30px rgba(15, 23, 42, .12);
+            }
+            .navbar-nav .dropdown-menu {
+                position: static !important;
+                box-shadow: none;
+                background: var(--bg);
+                border-radius: .6rem;
+            }
+            .navbar-nav .nav-item .btn-brand {
+                width: 100%;
+            }
+        }
+
+        /* ---------- Botões ---------- */
+        .btn-brand {
+            background: var(--brand);
+            border-color: var(--brand);
+            color: #fff;
+            font-weight: 600;
+        }
+        .btn-brand:hover, .btn-brand:focus {
+            background: var(--brand-dark);
+            border-color: var(--brand-dark);
+            color: #fff;
+        }
+
+        .btn-outline-brand {
+            border-color: var(--brand);
+            color: var(--brand);
+            font-weight: 600;
+        }
+        .btn-outline-brand:hover {
+            background: var(--brand);
+            border-color: var(--brand);
+            color: #fff;
+        }
+
+        .text-brand { color: var(--brand) !important; }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            background: linear-gradient(135deg, #312e81 0%, #6d28d9 55%, #9333ea 100%);
+            color: #fff;
+            border-radius: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            right: -80px;
+            top: -80px;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .08);
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            right: 40px;
+            bottom: -100px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .06);
+        }
+
+        /* ---------- Cards de produto ---------- */
+        .product-card {
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #fff;
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 32px rgba(15, 23, 42, .14) !important;
+        }
+        .product-card img {
+            height: 220px;
+            width: 100%;
+            object-fit: cover;
+            transition: transform .35s ease;
+        }
+        .product-card:hover img { transform: scale(1.06); }
+
+        .category-badge {
+            background: var(--brand-light);
+            color: var(--brand);
+            font-weight: 600;
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        .product-price {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: var(--brand);
+            font-size: 1.25rem;
+        }
+
+        .no-image {
+            height: 220px;
+            background: #e2e8f0;
+        }
+
+        /* ---------- Cabeçalhos de página ---------- */
+        .page-header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #fff;
+            padding: 1.75rem 2rem;
+            border-radius: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        /* ---------- Formulários ---------- */
+        .form-card {
+            border: 0;
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+            overflow: hidden;
+        }
+        .form-card .card-header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #fff;
+            border: 0;
+        }
+
+        .alert { border-radius: .9rem; }
+
+        /* ---------- Rodapé ---------- */
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            margin-top: auto;
+        }
+        footer a { color: #94a3b8; }
+        footer a:hover { color: #fff; }
+    </style>
+    
+    
+</head>
+
+<body>
+    
+<header class="site-header">
+    <div class="top-bar py-1">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-truck me-1"></i>Frete grátis em compras acima de R$ 199</span>
+            <span class="d-none d-sm-inline"><i class="bi bi-shield-check me-1"></i>Compra 100% segura</span>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-store py-2">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <span class="brand-badge"><i class="bi bi-bag"></i></span>
+                <span class="fw-bold fs-4">Tech<span class="text-brand">Shop</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-store active" href="/">
+                            <i class="bi bi-house-door me-1"></i>Início
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-store " href="/categories">
+                            <i class="bi bi-tags me-1"></i>Categorias
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link nav-link-store dropdown-toggle "
+                            href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-gear me-1"></i>Administração
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                            <li><a class="dropdown-item" href="/create"><i class="bi bi-plus-circle me-2 text-success"></i>Cadastrar produto</a></li>
+                            <li><a class="dropdown-item" href="/update"><i class="bi bi-pencil me-2 text-primary"></i>Atualizar produtos</a></li>
+                            <li><a class="dropdown-item" href="/delete"><i class="bi bi-trash me-2 text-danger"></i>Excluir produtos</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/categories"><i class="bi bi-tags me-2 text-warning"></i>Gerenciar categorias</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <button type="button" class="btn btn-brand position-relative" onclick="showCart()" title="Carrinho de compras (demonstração)">
+                            <i class="bi bi-cart3 me-1"></i>Carrinho
+                            <span id="cartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">0</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+
+
+
+<div class="container mt-4">
+    <div class="hero p-4 p-lg-5 mb-5">
+        <div class="row align-items-center position-relative" style="z-index: 1;">
+            <div class="col-lg-8">
+                <span class="badge bg-white bg-opacity-10 mb-3 px-3 py-2">
+                    <i class="bi bi-lightning-charge-fill me-1"></i>Novidades toda semana
+                </span>
+                <h1 class="display-5 fw-bold mb-3">Tecnologia com o melhor preço para você</h1>
+                <p class="lead mb-4 opacity-75">
+                    Smartphones, fones, acessórios e muito mais.
+                    Encontre o produto ideal e aproveite as ofertas da TechShop.
+                </p>
+                <a href="#produtos" class="btn btn-light btn-lg px-4 fw-semibold">
+                    Ver produtos <i class="bi bi-arrow-down ms-1"></i>
+                </a>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block text-end">
+                <i class="bi bi-bag-heart-fill display-1 opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <h2 class="section-title h3 mb-0" id="produtos">
+            <i class="bi bi-grid text-brand"></i>Nossos produtos
+        </h2>
+        <div class="input-group" style="max-width: 320px;">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Buscar produto...">
+        </div>
+    </div>
+
+    
+    <div class="row" id="productsGrid">
+        
+        
+<div class="col-md-6 col-lg-4 mb-4 product-item" data-name="smartphone aurora">
+    <div class="card product-card h-100 border-0 shadow-sm">
+        <a href="/product/7" class="d-block overflow-hidden">
+            
+            <img src="/media/products/seeds/smartphone-aurora.png" class="card-img-top" alt="Smartphone Aurora">
+            
+        </a>
+        <div class="card-body d-flex flex-column p-3">
+            <span class="badge category-badge align-self-start mb-2">Eletrônicos</span>
+            <h5 class="card-title fs-6 fw-bold mb-1">Smartphone Aurora</h5>
+            <p class="card-text text-muted small flex-grow-1"> Smartphone fictício com acabamento azul, tela ampla e câmeras de alta …</p>
+            <p class="product-price mb-3">R$ 2.499</p>
+            
+            <div class="d-flex gap-2 mt-auto">
+                <a href="/product/7" class="btn btn-outline-brand btn-sm flex-fill">Ver detalhes</a>
+                <button type="button" class="btn btn-brand btn-sm flex-fill" onclick="addToCart('Smartphone Aurora')">
+                    <i class="bi bi-cart-plus me-1"></i>Comprar
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+        
+        
+<div class="col-md-6 col-lg-4 mb-4 product-item" data-name="fone pulse">
+    <div class="card product-card h-100 border-0 shadow-sm">
+        <a href="/product/8" class="d-block overflow-hidden">
+            
+            <img src="/media/products/seeds/fone-pulse.png" class="card-img-top" alt="Fone Pulse">
+            
+        </a>
+        <div class="card-body d-flex flex-column p-3">
+            <span class="badge category-badge align-self-start mb-2">Eletrônicos</span>
+            <h5 class="card-title fs-6 fw-bold mb-1">Fone Pulse</h5>
+            <p class="card-text text-muted small flex-grow-1"> Fone sem fio circum-aural com isolamento acústico e almofadas confortá…</p>
+            <p class="product-price mb-3">R$ 399</p>
+            
+            <div class="d-flex gap-2 mt-auto">
+                <a href="/product/8" class="btn btn-outline-brand btn-sm flex-fill">Ver detalhes</a>
+                <button type="button" class="btn btn-brand btn-sm flex-fill" onclick="addToCart('Fone Pulse')">
+                    <i class="bi bi-cart-plus me-1"></i>Comprar
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+        
+        
+<div class="col-md-6 col-lg-4 mb-4 product-item" data-name="mochila horizonte">
+    <div class="card product-card h-100 border-0 shadow-sm">
+        <a href="/product/9" class="d-block overflow-hidden">
+            
+            <img src="/media/products/seeds/mochila-horizonte.png" class="card-img-top" alt="Mochila Horizonte">
+            
+        </a>
+        <div class="card-body d-flex flex-column p-3">
+            <span class="badge category-badge align-self-start mb-2">Acessórios</span>
+            <h5 class="card-title fs-6 fw-bold mb-1">Mochila Horizonte</h5>
+            <p class="card-text text-muted small flex-grow-1">Mochila urbana resistente com compartimentos para notebook e acessórios.</p>
+            <p class="product-price mb-3">R$ 289</p>
+            
+            <div class="d-flex gap-2 mt-auto">
+                <a href="/product/9" class="btn btn-outline-brand btn-sm flex-fill">Ver detalhes</a>
+                <button type="button" class="btn btn-brand btn-sm flex-fill" onclick="addToCart('Mochila Horizonte')">
+                    <i class="bi bi-cart-plus me-1"></i>Comprar
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+        
+        
+<div class="col-md-6 col-lg-4 mb-4 product-item" data-name="relógio atlas">
+    <div class="card product-card h-100 border-0 shadow-sm">
+        <a href="/product/10" class="d-block overflow-hidden">
+            
+            <img src="/media/products/seeds/rel%C3%B3gio-atlas.png" class="card-img-top" alt="Relógio Atlas">
+            
+        </a>
+        <div class="card-body d-flex flex-column p-3">
+            <span class="badge category-badge align-self-start mb-2">Eletrônicos</span>
+            <h5 class="card-title fs-6 fw-bold mb-1">Relógio Atlas</h5>
+            <p class="card-text text-muted small flex-grow-1"> Relógio inteligente fictício com monitoramento de atividades e notific…</p>
+            <p class="product-price mb-3">R$ 799</p>
+            
+            <div class="d-flex gap-2 mt-auto">
+                <a href="/product/10" class="btn btn-outline-brand btn-sm flex-fill">Ver detalhes</a>
+                <button type="button" class="btn btn-brand btn-sm flex-fill" onclick="addToCart('Relógio Atlas')">
+                    <i class="bi bi-cart-plus me-1"></i>Comprar
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+        
+        
+<div class="col-md-6 col-lg-4 mb-4 product-item" data-name="caixa de som brisa">
+    <div class="card product-card h-100 border-0 shadow-sm">
+        <a href="/product/11" class="d-block overflow-hidden">
+            
+            <img src="/media/products/seeds/caixa-de-som-brisa.png" class="card-img-top" alt="Caixa de Som Brisa">
+            
+        </a>
+        <div class="card-body d-flex flex-column p-3">
+            <span class="badge category-badge align-self-start mb-2">Eletrônicos</span>
+            <h5 class="card-title fs-6 fw-bold mb-1">Caixa de Som Brisa</h5>
+            <p class="card-text text-muted small flex-grow-1"> Caixa de som portátil com conexão sem fio e acabamento em tecido terra…</p>
+            <p class="product-price mb-3">R$ 249</p>
+            
+            <div class="d-flex gap-2 mt-auto">
+                <a href="/product/11" class="btn btn-outline-brand btn-sm flex-fill">Ver detalhes</a>
+                <button type="button" class="btn btn-brand btn-sm flex-fill" onclick="addToCart('Caixa de Som Brisa')">
+                    <i class="bi bi-cart-plus me-1"></i>Comprar
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+        
+        
+<div class="col-md-6 col-lg-4 mb-4 product-item" data-name="caneca térmica nuvem">
+    <div class="card product-card h-100 border-0 shadow-sm">
+        <a href="/product/12" class="d-block overflow-hidden">
+            
+            <img src="/media/products/seeds/caneca-t%C3%A9rmica-nuvem.png" class="card-img-top" alt="Caneca Térmica Nuvem">
+            
+        </a>
+        <div class="card-body d-flex flex-column p-3">
+            <span class="badge category-badge align-self-start mb-2">Casa</span>
+            <h5 class="card-title fs-6 fw-bold mb-1">Caneca Térmica Nuvem</h5>
+            <p class="card-text text-muted small flex-grow-1"> Caneca térmica de cerâmica com tampa, ideal para bebidas quentes ou fr…</p>
+            <p class="product-price mb-3">R$ 119</p>
+            
+            <div class="d-flex gap-2 mt-auto">
+                <a href="/product/12" class="btn btn-outline-brand btn-sm flex-fill">Ver detalhes</a>
+                <button type="button" class="btn btn-brand btn-sm flex-fill" onclick="addToCart('Caneca Térmica Nuvem')">
+                    <i class="bi bi-cart-plus me-1"></i>Comprar
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+        
+    </div>
+    
+</div>
+
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+        <div id="cartToast" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-cart-check-fill text-success me-2"></i>
+                    <span id="cartToastMsg">Produto adicionado ao carrinho (demonstração).</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="pt-5 pb-4 mt-5">
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-md-5">
+                    <h5 class="fw-bold text-white d-flex align-items-center gap-2">
+                        <span class="brand-badge"><i class="bi bi-bag"></i></span> TechShop
+                    </h5>
+                    <p class="small mt-3 mb-0" style="max-width: 340px;">
+                        Projeto acadêmico de CRUD com Django — padrão MTV, com models, views,
+                        templates e formulários integrados ao banco de dados.
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-semibold text-white mb-3">Navegação</h6>
+                    <ul class="list-unstyled small d-grid gap-2">
+                        <li><a href="/">Início</a></li>
+                        <li><a href="/categories">Categorias</a></li>
+                        <li><a href="/create">Cadastrar produto</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="fw-semibold text-white mb-3">Atendimento</h6>
+                    <ul class="list-unstyled small d-grid gap-2">
+                        <li><i class="bi bi-envelope me-2 text-secondary"></i>contato@techshop.com</li>
+                        <li><i class="bi bi-whatsapp me-2 text-secondary"></i>(85) 99999-0000</li>
+                        <li><i class="bi bi-clock me-2 text-secondary"></i>Seg. a sex., 8h às 18h</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary my-4">
+            <p class="text-center small mb-0 text-secondary">
+                &copy; 2026 TechShop — Desenvolvido com Django para fins educacionais.
+            </p>
+        </div>
+    </footer>
+
+    
+
+    <script src="/static/vendor/bootstrap.bundle.min.js"></script>
+    <script>
+        var cart = JSON.parse(localStorage.getItem('techshop_cart') || '[]');
+
+        function updateCartBadge() {
+            var badge = document.getElementById('cartBadge');
+            if (badge) {
+                badge.textContent = cart.length;
+                badge.classList.toggle('d-none', cart.length === 0);
+            }
+        }
+
+        function addToCart(name) {
+            cart.push(name);
+            localStorage.setItem('techshop_cart', JSON.stringify(cart));
+            updateCartBadge();
+            document.getElementById('cartToastMsg').textContent =
+                name + ' foi adicionado ao carrinho (demonstração).';
+            bootstrap.Toast.getOrCreateInstance(document.getElementById('cartToast'), { delay: 2500 }).show();
+        }
+
+        function showCart() {
+            var message = cart.length === 0
+                ? 'Seu carrinho está vazio. Aproveite as ofertas da TechShop!'
+                : 'Você tem ' + cart.length + ' produto(s) no carrinho (demonstração).';
+            document.getElementById('cartToastMsg').textContent = message;
+            bootstrap.Toast.getOrCreateInstance(document.getElementById('cartToast'), { delay: 3000 }).show();
+        }
+
+        document.addEventListener('DOMContentLoaded', updateCartBadge);
+    </script>
+    
+<script>
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        document.querySelectorAll('#productsGrid .product-item').forEach((item) => {
+            item.classList.toggle('d-none', !item.dataset.name.includes(query));
+        });
+    });
+</script>
+
+
+</body>
+
+</html>
